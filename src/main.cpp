@@ -14,7 +14,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
-#include "xeno-window/xeno-window.hpp"
+#include "xeno-pal.hpp"
 
 const uint32_t WIDTH = 1200;
 const uint32_t HEIGHT = 800;
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    xeno::XenoWindow *window;
+    xeno::pal::XenoWindow *window;
     TerrainConfig config;
     VkInstance instance;
     VkSurfaceKHR surface;
@@ -81,7 +81,7 @@ private:
     void initWindow()
     {
         startTime = std::chrono::high_resolution_clock::now();
-        window = new xeno::XenoWindow(WIDTH, HEIGHT, "Vulkan Terrain with ImGui");
+        window = new xeno::pal::XenoWindow(WIDTH, HEIGHT, "Vulkan Terrain with ImGui");
         std::cout << "🌋 Vulkan Terrain Renderer Initialized!" << std::endl;
     }
 

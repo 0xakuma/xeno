@@ -2,20 +2,132 @@
 
 #include <cstddef>
 #include <vector>
+#include <GLFW/glfw3.h>
+#include <string>
+#include <unordered_map>
+#include <functional>
+#include <fstream>
+#define GLFW_INCLUDE_VULKAN
 
-class File
+namespace xeno
 {
-public:
-    File(const char *filename);
-    ~File();
+    namespace pal
+    {
+        // Forward declaration
+        class XenoWindow;
 
-    void open();
-    void close();
-    std::vector<char> read(size_t size);
-    bool isOpen() const;
+        class InputHandler
+        {
+        public:
+            InputHandler(XenoWindow *window);
+            ~InputHandler();
 
-private:
-    std::ifstream file;
-    size_t fileSize;
-    bool openFlag;
-};
+            // Keyboard input
+            bool isKeyPressed(int key) const;
+            bool isKeyReleased(int key) const;
+            bool isKeyHeld(int key) const;
+
+            // Mouse input
+            bool isMouseButtonPressed(int button) const;
+            bool isMouseButtonReleased(int button) const;
+            bool isMouseButtonHeld(int button) const;
+            void getMousePosition(double &x, double &y) const;
+            void getCursorDelta(double &deltaX, double &deltaY) const;
+
+            // Scroll wheel
+            void getScrollOffset(double &xOffset, double &yOffset) const;
+
+            // Callbacks (optional for advanced usage)
+            void setKeyCallback(std::function<void(int, int, int, int)> callback);
+            void setMouseButtonCallback(std::function<void(int, int, int)> callback);
+            void setCursorPosCallback(std::function<void(double, double)> callback);
+            void setScrollCallback(std::function<void(double, double)> callback);
+
+            // Update input state (call once per frame)
+            void update();
+
+        private:
+            XenoWindow *m_window;
+            GLFWwindow *m_glfwWindow;
+
+            // Input state tracking
+            std::unordered_map<int, bool> m_keyPressed;
+            std::unordered_map<int, bool> m_keyReleased;
+            std::unordered_map<int, bool> m_keyHeld;
+
+            std::unordered_map<int, bool> m_mousePressed;
+            std::unordered_map<int, bool> m_mouseReleased;
+            std::unordered_map<int, bool> m_mouseHeld;
+
+            double m_mouseX, m_mouseY;
+            double m_lastMouseX, m_lastMouseY;
+            double m_mouseDeltaX, m_mouseDeltaY;
+            double m_scrollX, m_scrollY;
+
+            // User callbacks
+            std::function<void(int, int, int, int)> m_keyCallback;
+            std::function<void(int, int, int)> m_mouseButtonCallback;
+            std::function<void(double, double)> m_cursorPosCallback;
+            std::function<void(double, double)> m_scrollCallback;
+
+            // Static callback functions for GLFW
+            static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+            static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+            static void cursorPosCallback(GLFWwindow *window, double xpos, double ypos);
+            static void scrollCallback(GLFWwindow *window, double xoffset, double yoffset);
+
+            // Helper methods
+            void resetFrameState();
+        };
+
+        class File
+        {
+        public:
+            File(const char *filename);
+            ~File();
+
+            void open();
+            void close();
+            std::vector<char> read(size_t size);
+            bool isOpen() const;
+
+        private:
+            std::ifstream file;
+            size_t fileSize;
+            bool openFlag;
+        };
+
+        class XenoWindow
+        {
+        public:
+            XenoWindow(int width, int height, std::string title);
+            ~XenoWindow();
+            GLFWwindow *getInstance() const { return window; }
+            bool shouldClose() const { return glfwWindowShouldClose(window); }
+
+        private:
+            int width;
+            int height;
+            std::string title;
+
+            GLFWwindow *window;
+            void initWindow(int width, int height, const char *title);
+        };
+    }
+
+    class Arena
+    {
+    public:
+        Arena(size_t size);
+        ~Arena();
+
+        void *allocate(size_t size);
+        void deallocate(void *ptr);
+        void reset();
+
+    private:
+        char *m_memory;
+        size_t m_size;
+        size_t m_offset;
+    };
+}

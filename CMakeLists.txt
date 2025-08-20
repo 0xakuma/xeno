@@ -25,6 +25,8 @@ find_package(Vulkan REQUIRED)
 
 add_executable(xeno 
     src/main.cpp
-    src/xeno-window/xeno-window.cpp
+    src/xeno-pal/xeno-window.cpp
+    src/xeno-pal/xeno-input.cpp
+    src/xeno-pal/xeno-pal-arena.cpp
 )
 target_link_libraries(xeno PRIVATE glfw imgui::imgui glm::glm Vulkan::Vulkan)
