@@ -7,7 +7,7 @@ namespace xeno
         Arena::Arena(size_t size)
             : m_size(size), m_offset(0)
         {
-            m_memory = new char[size];
+            m_memory = reinterpret_cast<char *>(new char[size]);
             if (!m_memory)
             {
                 throw std::runtime_error("Failed to allocate memory for arena");
@@ -28,11 +28,6 @@ namespace xeno
             void *ptr = m_memory + m_offset;
             m_offset += size;
             return ptr;
-        }
-
-        void Arena::deallocate(void *ptr)
-        {
-            // No-op: Arena does not support deallocation
         }
 
         void Arena::reset()

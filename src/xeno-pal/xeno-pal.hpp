@@ -120,9 +120,17 @@ namespace xeno
     public:
         Arena(size_t size);
         ~Arena();
+        Arena(const Arena &) = delete;
+        Arena &operator=(const Arena &) = delete;
 
         void *allocate(size_t size);
-        void deallocate(void *ptr);
+
+        template <class T>
+        T *alloc(size_t count)
+        {
+            return static_cast<T *>(allocate(sizeof(T) * count));
+        }
+
         void reset();
 
     private:
