@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <functional>
 #include <fstream>
+#include <thread>
 #define GLFW_INCLUDE_VULKAN
 
 namespace xeno
@@ -114,7 +115,6 @@ namespace xeno
             void initWindow(int width, int height, const char *title);
         };
     }
-
     class Arena
     {
     public:
@@ -137,5 +137,28 @@ namespace xeno
         char *m_memory;
         size_t m_size;
         size_t m_offset;
+    };
+
+    class ThreadPool
+    {
+    public:
+        ThreadPool(size_t numThreads = std::thread::hardware_concurrency());
+        ~ThreadPool();
+        template <typename F>
+        void enqueue(F &&f)
+        {
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                tasks_.emplace(std::forward<F>(f));
+                condition_.notify_one();
+            }
+        }
+
+    private:
+        std::vector<std::thread> threads_;
+        std::queue<std::function<void()>> tasks_;
+        std::mutex mutex_;
+        std::condition_variable condition_;
+        bool stopping_ = false;
     };
 }
