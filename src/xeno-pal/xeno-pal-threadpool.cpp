@@ -2,12 +2,14 @@
 
 namespace xeno
 {
-    ThreadPool::ThreadPool(size_t num_threads)
+    namespace pal
     {
-        for (size_t i = 0; i < num_threads; ++i)
+        ThreadPool::ThreadPool(size_t num_threads)
         {
-            threads_.emplace_back([this]()
-                                  {
+            for (size_t i = 0; i < num_threads; ++i)
+            {
+                threads_.emplace_back([this]()
+                                      {
                 for(;;) {
                     std::function<void()> task;
                     {
@@ -23,19 +25,20 @@ namespace xeno
                     }
                     task();
                 } });
+            }
         }
-    }
 
-    ThreadPool::~ThreadPool()
-    {
+        ThreadPool::~ThreadPool()
         {
-            std::unique_lock<std::mutex> lock(mutex_);
-            stopping_ = true;
-        }
-        condition_.notify_all();
-        for (std::thread &thread : threads_)
-        {
-            thread.join();
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                stopping_ = true;
+            }
+            condition_.notify_all();
+            for (std::thread &thread : threads_)
+            {
+                thread.join();
+            }
         }
     }
 }

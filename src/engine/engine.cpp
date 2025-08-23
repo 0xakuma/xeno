@@ -2,11 +2,14 @@
 
 namespace xeno
 {
-    Engine::Engine() : window(800, 600, "Xeno Engine")
+    Engine::Engine(EngineConfig config) : window(config.width, config.height, config.title), config(config)
     {
+        // Initialize renderer after window is created and GLFW is set up
+        renderer.initialize();
     }
     Engine::~Engine()
     {
+        renderer.cleanup();
     }
 
     Engine &Engine::getInstance()

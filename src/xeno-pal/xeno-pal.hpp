@@ -118,57 +118,58 @@ namespace xeno
             GLFWwindow *window;
             void initWindow(int width, int height, const char *title);
         };
-    }
-    class Arena
-    {
-    public:
-        Arena(size_t size);
-        ~Arena();
-        Arena(const Arena &) = delete;
-        Arena &operator=(const Arena &) = delete;
-
-        void *allocate(size_t size);
-
-        template <class T>
-        T *alloc(size_t count)
+        class Arena
         {
-            return static_cast<T *>(allocate(sizeof(T) * count));
-        }
-
-        void reset();
-
-    private:
-        char *m_memory;
-        size_t m_size;
-        size_t m_offset;
-    };
-
-    class ThreadPool
-    {
-    public:
-        ThreadPool(size_t numThreads = std::thread::hardware_concurrency());
-        ~ThreadPool();
-        template <typename F>
-        void enqueue(F &&f)
-        {
-            {
-                std::unique_lock<std::mutex> lock(mutex_);
-                tasks_.emplace(std::forward<F>(f));
-                condition_.notify_one();
-            }
-        }
-
-    private:
-        std::vector<std::thread> threads_;
-        std::queue<std::function<void()>> tasks_;
-        std::mutex mutex_;
-        std::condition_variable condition_;
-        bool stopping_ = false;
-    };
-
-    class Logger {
         public:
-            enum class LogLevel {
+            Arena(size_t size);
+            ~Arena();
+            Arena(const Arena &) = delete;
+            Arena &operator=(const Arena &) = delete;
+
+            void *allocate(size_t size);
+
+            template <class T>
+            T *alloc(size_t count)
+            {
+                return static_cast<T *>(allocate(sizeof(T) * count));
+            }
+
+            void reset();
+
+        private:
+            char *m_memory;
+            size_t m_size;
+            size_t m_offset;
+        };
+
+        class ThreadPool
+        {
+        public:
+            ThreadPool(size_t numThreads = std::thread::hardware_concurrency());
+            ~ThreadPool();
+            template <typename F>
+            void enqueue(F &&f)
+            {
+                {
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    tasks_.emplace(std::forward<F>(f));
+                    condition_.notify_one();
+                }
+            }
+
+        private:
+            std::vector<std::thread> threads_;
+            std::queue<std::function<void()>> tasks_;
+            std::mutex mutex_;
+            std::condition_variable condition_;
+            bool stopping_ = false;
+        };
+
+        class Logger
+        {
+        public:
+            enum class LogLevel
+            {
                 Info,
                 Warning,
                 Error
@@ -182,8 +183,10 @@ namespace xeno
             void logInfo(const std::string &message);
             void logWarning(const std::string &message);
             void logError(const std::string &message);
+
         private:
             std::ofstream m_logFile;
             std::mutex m_logMutex;
-    };
+        };
+    }
 }

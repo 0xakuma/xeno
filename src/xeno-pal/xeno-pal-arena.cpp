@@ -3,34 +3,37 @@
 
 namespace xeno
 {
-    Arena::Arena(size_t size)
-        : m_size(size), m_offset(0)
+    namespace pal
     {
-        m_memory = reinterpret_cast<char *>(new char[size]);
-        if (!m_memory)
+        Arena::Arena(size_t size)
+            : m_size(size), m_offset(0)
         {
-            throw std::runtime_error("Failed to allocate memory for arena");
+            m_memory = reinterpret_cast<char *>(new char[size]);
+            if (!m_memory)
+            {
+                throw std::runtime_error("Failed to allocate memory for arena");
+            }
         }
-    }
 
-    Arena::~Arena()
-    {
-        delete[] m_memory;
-    }
-
-    void *Arena::allocate(size_t size)
-    {
-        if (m_offset + size > m_size)
+        Arena::~Arena()
         {
-            throw std::runtime_error("Arena memory exhausted");
+            delete[] m_memory;
         }
-        void *ptr = m_memory + m_offset;
-        m_offset += size;
-        return ptr;
-    }
 
-    void Arena::reset()
-    {
-        m_offset = 0;
+        void *Arena::allocate(size_t size)
+        {
+            if (m_offset + size > m_size)
+            {
+                throw std::runtime_error("Arena memory exhausted");
+            }
+            void *ptr = m_memory + m_offset;
+            m_offset += size;
+            return ptr;
+        }
+
+        void Arena::reset()
+        {
+            m_offset = 0;
+        }
     }
 }

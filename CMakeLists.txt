@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Threads REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(Vulkan REQUIRED)
 
 add_library(xenoengine STATIC
     src/engine/engine.cpp
@@ -20,16 +21,18 @@ add_library(xenoengine STATIC
     src/xeno-pal/xeno-pal-arena.cpp
     src/xeno-pal/xeno-pal-threadpool.cpp
     src/xeno-pal/xeno-window.cpp
+    src/vulkan-renderer/vulkan-renderer.cpp
 )
 
 target_include_directories(xenoengine PUBLIC
     src/
     src/engine/
     src/xeno-pal/
+    src/vulkan-renderer/
 )
 
 
-target_link_libraries(xenoengine PUBLIC Threads::Threads glfw)
+target_link_libraries(xenoengine PUBLIC Threads::Threads glfw Vulkan::Vulkan)
 
 add_executable(xeno src/main.cpp)
 target_link_libraries(xeno PRIVATE xenoengine)

@@ -3,7 +3,8 @@
 
 int main()
 {
-    xeno::Engine engine;
+    xeno::EngineConfig config{800, 600, "Xeno Engine"};
+    xeno::Engine engine(config);
     try
     {
         std::cout << "Starting Xeno Engine..." << std::endl;
