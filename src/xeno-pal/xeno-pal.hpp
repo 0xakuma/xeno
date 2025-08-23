@@ -165,4 +165,25 @@ namespace xeno
         std::condition_variable condition_;
         bool stopping_ = false;
     };
+
+    class Logger {
+        public:
+            enum class LogLevel {
+                Info,
+                Warning,
+                Error
+            };
+
+            Logger(const std::string &filename);
+            ~Logger();
+
+            void log(const std::string &message, LogLevel level = LogLevel::Info);
+            void flush();
+            void logInfo(const std::string &message);
+            void logWarning(const std::string &message);
+            void logError(const std::string &message);
+        private:
+            std::ofstream m_logFile;
+            std::mutex m_logMutex;
+    };
 }
