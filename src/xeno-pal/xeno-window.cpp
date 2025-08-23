@@ -20,6 +20,10 @@ namespace xeno
                 glfwTerminate();
             }
         }
+        void XenoWindow::pollEvents()
+        {
+            glfwPollEvents();
+        }
 
         void XenoWindow::initWindow(int width, int height, const char *title)
         {

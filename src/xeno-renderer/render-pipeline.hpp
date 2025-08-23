@@ -1,13 +1,18 @@
-class RenderPipeline
+#pragma once
+
+namespace xeno
 {
-public:
-    RenderPipeline();
-    ~RenderPipeline();
+    class RenderPipeline
+    {
+    public:
+        RenderPipeline();
+        ~RenderPipeline();
 
-    void Initialize();
-    void Render();
-    void Cleanup();
+        void Initialize();
+        void Render();
+        void Cleanup();
 
-private:
-    // Private member variables and methods
-};
+    private:
+        // Private member variables and methods
+    };
+}

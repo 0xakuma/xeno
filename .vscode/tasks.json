@@ -1,0 +1,60 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Configure Xeno Engine",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Build Xeno Engine",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"build"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			],
+			"isBackground": false,
+			"dependsOn": "Configure Xeno Engine"
+		},
+		{
+			"label": "Run Tests",
+			"type": "shell",
+			"command": "ctest",
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"group": "test",
+			"problemMatcher": [],
+			"isBackground": false,
+			"dependsOn": "Build Xeno Engine"
+		},
+		{
+			"label": "Run Example Basic",
+			"type": "shell",
+			"command": "./xeno_example_basic",
+			"options": {
+				"cwd": "${workspaceFolder}/build"
+			},
+			"group": "build",
+			"problemMatcher": [],
+			"isBackground": false,
+			"dependsOn": "Build Xeno Engine"
+		}
+	]
+}

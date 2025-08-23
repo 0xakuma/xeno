@@ -1,11 +1,14 @@
 #include "render-pipeline.hpp"
 
-RenderPipeline::RenderPipeline()
+namespace xeno
 {
-    // Initialize resources
-}
+    RenderPipeline::RenderPipeline()
+    {
+        // Initialize resources
+    }
 
-RenderPipeline::~RenderPipeline()
-{
-    // Cleanup resources
+    RenderPipeline::~RenderPipeline()
+    {
+        // Cleanup resources
+    }
 }

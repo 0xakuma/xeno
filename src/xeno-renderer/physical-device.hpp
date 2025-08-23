@@ -2,11 +2,14 @@
 
 #include <vulkan/vulkan.h>
 
-class PhysicalDevice
+namespace xeno
 {
-public:
-    PhysicalDevice(VkInstance instance);
+    class PhysicalDevice
+    {
+    public:
+        PhysicalDevice(VkInstance instance);
 
-private:
-    VkPhysicalDevice physicalDevice;
-};
+    private:
+        VkPhysicalDevice physicalDevice;
+    };
+}

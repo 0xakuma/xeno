@@ -1,32 +1,58 @@
 cmake_minimum_required(VERSION 3.15)
-project(MyProject LANGUAGES CXX)
+
+# Set vcpkg toolchain if available
+if(EXISTS "/Users/akuma/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(CMAKE_TOOLCHAIN_FILE "/Users/akuma/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
+endif()
+
+project(XenoEngine LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Tell CMake where to find vcpkg toolchain
-# You can also pass this from the command line instead
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "/Users/akuma/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "")
-endif()
+find_package(Threads REQUIRED)
+find_package(glfw3 REQUIRED)
 
-# Set the correct vcpkg triplet for Apple Silicon Mac
-if(NOT DEFINED VCPKG_TARGET_TRIPLET)
-    set(VCPKG_TARGET_TRIPLET "arm64-osx")
-endif()
-
-find_package(glfw3 CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
-
-# Find Vulkan instead of OpenGL
-find_package(Vulkan REQUIRED)
-
-add_executable(xeno 
-    src/main.cpp
-    src/xeno-pal/xeno-window.cpp
+add_library(xenoengine STATIC
+    src/engine/engine.cpp
+    src/xeno-pal/xeno-filesystem.cpp
     src/xeno-pal/xeno-input.cpp
     src/xeno-pal/xeno-pal-arena.cpp
+    src/xeno-pal/xeno-pal-threadpool.cpp
+    src/xeno-pal/xeno-window.cpp
 )
-target_link_libraries(xeno PRIVATE glfw imgui::imgui glm::glm Vulkan::Vulkan)
+
+target_include_directories(xenoengine PUBLIC
+    src/
+    src/engine/
+    src/xeno-pal/
+)
+
+
+target_link_libraries(xenoengine PUBLIC Threads::Threads glfw)
+
+add_executable(xeno src/main.cpp)
+target_link_libraries(xeno PRIVATE xenoengine)
+
+enable_testing()
+
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/tests)
+
+add_executable(xeno_tests
+    tests/test_main.cpp
+    tests/test_engine.cpp
+)
+
+target_link_libraries(xeno_tests PRIVATE xenoengine)
+target_include_directories(xeno_tests PRIVATE
+    src/
+    src/engine/
+    tests/
+)
+
+add_test(NAME engine_tests COMMAND xeno_tests)
+
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+
+add_executable(xeno_example_basic examples/example_basic.cpp)
+target_link_libraries(xeno_example_basic PRIVATE xenoengine)

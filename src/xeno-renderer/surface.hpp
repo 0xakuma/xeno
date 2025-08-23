@@ -1,12 +1,18 @@
+#pragma once
+
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-class Surface
+namespace xeno
 {
-public:
-    Surface(VkInstance instance, GLFWwindow *window);
+    class Surface
+    {
+    public:
+        Surface(VkInstance instance, GLFWwindow *window);
+        ~Surface();
 
-private:
-    VkInstance instance;
-    VkSurfaceKHR surface;
-};
+    private:
+        VkInstance instance;
+        VkSurfaceKHR surface;
+    };
+}

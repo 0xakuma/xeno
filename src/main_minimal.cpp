@@ -1,12 +1,11 @@
-#include "engine/engine.hpp"
+#include "engine/engine_minimal.hpp"
 #include <iostream>
 
 int main()
 {
-    xeno::Engine engine;
+    xeno::Engine &engine = xeno::Engine::getInstance();
     try
     {
-        std::cout << "Starting Xeno Engine..." << std::endl;
         engine.run();
     }
     catch (const std::exception &e)

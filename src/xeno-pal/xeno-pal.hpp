@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -8,6 +8,9 @@
 #include <functional>
 #include <fstream>
 #include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 #define GLFW_INCLUDE_VULKAN
 
 namespace xeno
@@ -105,6 +108,7 @@ namespace xeno
             ~XenoWindow();
             GLFWwindow *getInstance() const { return window; }
             bool shouldClose() const { return glfwWindowShouldClose(window); }
+            void pollEvents();
 
         private:
             int width;

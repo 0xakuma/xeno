@@ -1,0 +1,57 @@
+cmake_minimum_required(VERSION 3.15)
+project(XenoEngine LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Create a minimal version without external dependencies for testing
+# Note: This is a simplified version for demonstration
+
+# Find only essential system libraries
+find_package(Threads REQUIRED)
+
+# Create the Xeno Engine library (minimal version)
+add_library(xenoengine STATIC
+    src/engine/engine_minimal.cpp
+)
+
+# Set include directories for the library
+target_include_directories(xenoengine PUBLIC
+    src/
+    src/engine/
+)
+
+# Link with threads
+target_link_libraries(xenoengine PUBLIC Threads::Threads)
+
+# Create the main executable
+add_executable(xeno src/main_minimal.cpp)
+target_link_libraries(xeno PRIVATE xenoengine)
+
+# Enable testing
+enable_testing()
+
+# Create test directory if it doesn't exist and add test executable
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/tests)
+
+# Create a basic test executable
+add_executable(xeno_tests
+    tests/test_main_minimal.cpp
+    tests/test_engine_minimal.cpp
+)
+
+target_link_libraries(xeno_tests PRIVATE xenoengine)
+target_include_directories(xeno_tests PRIVATE
+    src/
+    src/engine/
+    tests/
+)
+
+# Add tests to CTest
+add_test(NAME engine_tests COMMAND xeno_tests)
+
+# Create examples directory and example executable
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+
+add_executable(xeno_example_basic examples/example_basic_minimal.cpp)
+target_link_libraries(xeno_example_basic PRIVATE xenoengine)
